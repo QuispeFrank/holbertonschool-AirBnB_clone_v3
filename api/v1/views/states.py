@@ -50,8 +50,6 @@ def post_obj():
     if "name" not in dic.keys():
         abort(400, "Missing name")
     new_state = State(**dic)
-    for k, v in dic.items():
-        setattr(new_state, k, v)
     storage.new(new_state)
     storage.save()
     return jsonify(new_state.to_dict()), 201
