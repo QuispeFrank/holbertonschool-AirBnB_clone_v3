@@ -7,8 +7,8 @@ from models.city import City
 from models.state import State
 
 
-@app_views.route('/states/<state_id>/cities', methods=["GET"]
-                , strict_slashes=False)
+@app_views.route('/states/<state_id>/cities',
+                 methods=["GET"], strict_slashes=False)
 def return_cities(state_id):
     """return all cities objects"""
     state = storage.get(State, state_id)
@@ -21,8 +21,7 @@ def return_cities(state_id):
     return jsonify(cities)
 
 
-@app_views.route('/cities/<city_id>', methods=["GET"]
-                , strict_slashes=False)
+@app_views.route('/cities/<city_id>', methods=["GET"], strict_slashes=False)
 def return_city(city_id):
     """return json City object"""
     obj = storage.get(City, city_id)
@@ -33,7 +32,7 @@ def return_city(city_id):
 
 
 @app_views.route('/cities/<city_id>', methods=["DELETE"])
-def delete_city(city_id)
+def delete_city(city_id):
     """ delete object by id """
     obj = storage.get(City, city_id)
     if obj is None:
@@ -43,8 +42,8 @@ def delete_city(city_id)
     return jsonify({}), 200
 
 
-@app_views.route('/states/<state_id>/cities', methods=["POST"]
-                , strict_slashes=False)
+@app_views.route('/states/<state_id>/cities',
+                 methods=["POST"], strict_slashes=False)
 def add_city(state_id):
     """ add a city to a state """
     data = {}
@@ -56,4 +55,24 @@ def add_city(state_id):
         abort(400, "Not a JSON")
     if "name" not in data.keys():
         abort(400, "Missing name")
-    new_city = 
+    new_city = City(**data)
+    new_city.state_id = state_id
+    storage.new(new_city)
+    storage.save()
+    return jsonify(new_city.to_dict()), 201
+
+
+@app_views.route('/cities/<city_id>', methods=["PUT"], strict_slashes=False)
+def update_city(city_id=None):
+    """ update the new city """
+    dic = {}
+    obj = storage.get("City", city_id)
+    if obj is None:
+        abort(404)
+    dic = request.get_json(silent=True)
+    if dic is None:
+        abort(400, "Not a JSON")
+    for key, value in dic.items():
+        setattr(obj, key, value)
+    storage.save()
+    return jsonify(obj.to_dict()), 200
