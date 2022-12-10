@@ -64,7 +64,7 @@ def post_review(place_id):
     users = storage.get(User, data['user_id'])
     if users is None:
         abort(404)
-    
+
     if "text" not in data.keys():
         abort(400, "Missing text")
 
