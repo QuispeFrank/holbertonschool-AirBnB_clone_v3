@@ -48,9 +48,8 @@ def post_user_obj():
         abort(400, "Missing password")
     if "email" not in dic.keys():
         abort(400, "Missing email")
-    new_user = User.User()
-    for k, v in dic.items():
-        setattr(new_user, k, v)
+    new_user = User(**dic)
+    storage.new(new_user)
     new_user.save()
     return jsonify(new_user.to_dict()), 201
 
