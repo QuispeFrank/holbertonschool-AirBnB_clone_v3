@@ -6,6 +6,7 @@ from flask import jsonify, abort, request
 from models.city import City
 from models.state import State
 from models.place import Place
+from models.user import User
 
 
 @app_views.route('/cities/<city_id>/places',
@@ -56,6 +57,11 @@ def add_place(city_id):
         abort(400, "Not a JSON")
     if "name" not in data.keys():
         abort(400, "Missing name")
+    if "user_id" not in data.keys():
+        abort(400, "Missing user_id")
+    user = storage.get(User, data['user_id'])
+    if user is None:
+        abort(404)
     new_place = Place(**data)
     new_place.city_id = city_id
     storage.new(new_place)
