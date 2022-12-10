@@ -13,10 +13,10 @@ from os import getenv as get
 
 # create a variable appp, instance of flask
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 # register the blueprint app_views to your instance app
 app.register_blueprint(app_views)
-cors = CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 
 @app.teardown_appcontext
